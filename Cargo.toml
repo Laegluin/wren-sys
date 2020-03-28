@@ -1,0 +1,20 @@
+[package]
+name = "wren-sys"
+version = "0.2.0"
+authors = ["Robin Mirow <robinmirow@live.com>"]
+edition = "2018"
+build = "build.rs"
+
+[features]
+default = ["meta", "random"]
+
+user_provided_lib = []
+
+meta = []
+random = []
+
+[dependencies]
+libc = "0.2.68"
+
+[build-dependencies]
+cc = "1.0.50"
