@@ -82,7 +82,7 @@ pub type WrenBindForeignMethodFn = extern "C" fn(
     className: *const c_char,
     isStatic: bool,
     signature: *const c_char,
-) -> WrenForeignMethodFn;
+) -> Option<WrenForeignMethodFn>;
 
 /// Displays a string of text to the user.
 pub type WrenWriteFn = extern "C" fn(vm: *mut WrenVM, text: *const c_char);
