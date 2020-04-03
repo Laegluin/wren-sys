@@ -53,30 +53,35 @@ pub struct WrenHandle(c_void);
 ///
 /// - To free memory, [memory] will be the memory to free and [newSize] will be
 ///   zero. It should return NULL.
-pub type WrenReallocateFn = extern "C" fn(memory: *mut c_void, newSize: size_t) -> *mut c_void;
+pub type WrenReallocateFn =
+    unsafe extern "C" fn(memory: *mut c_void, newSize: size_t) -> *mut c_void;
 
 /// A function callable from Wren code, but implemented in C.
-pub type WrenForeignMethodFn = extern "C" fn(vm: *mut WrenVM);
+pub type WrenForeignMethodFn = unsafe extern "C" fn(vm: *mut WrenVM);
 
 /// A finalizer function for freeing resources owned by an instance of a foreign
 /// class. Unlike most foreign methods, finalizers do not have access to the VM
 /// and should not interact with it since it's in the middle of a garbage
 /// collection.
-pub type WrenFinalizerFn = extern "C" fn(data: *mut c_void);
+pub type WrenFinalizerFn = unsafe extern "C" fn(data: *mut c_void);
 
 /// Gives the host a chance to canonicalize the imported module name,
 /// potentially taking into account the (previously resolved) name of the module
 /// that contains the import. Typically, this is used to implement relative
 /// imports.
-pub type WrenResolveModuleFn =
-    extern "C" fn(vm: *mut WrenVM, importer: *const c_char, name: *const c_char) -> *const c_char;
+pub type WrenResolveModuleFn = unsafe extern "C" fn(
+    vm: *mut WrenVM,
+    importer: *const c_char,
+    name: *const c_char,
+) -> *const c_char;
 
 /// Loads and returns the source code for the module [name].
-pub type WrenLoadModuleFn = extern "C" fn(vm: *mut WrenVM, name: *const c_char) -> *const c_char;
+pub type WrenLoadModuleFn =
+    unsafe extern "C" fn(vm: *mut WrenVM, name: *const c_char) -> *const c_char;
 
 /// Returns a pointer to a foreign method on [className] in [module] with
 /// [signature].
-pub type WrenBindForeignMethodFn = extern "C" fn(
+pub type WrenBindForeignMethodFn = unsafe extern "C" fn(
     vm: *mut WrenVM,
     module: *const c_char,
     className: *const c_char,
@@ -85,7 +90,7 @@ pub type WrenBindForeignMethodFn = extern "C" fn(
 ) -> Option<WrenForeignMethodFn>;
 
 /// Displays a string of text to the user.
-pub type WrenWriteFn = extern "C" fn(vm: *mut WrenVM, text: *const c_char);
+pub type WrenWriteFn = unsafe extern "C" fn(vm: *mut WrenVM, text: *const c_char);
 
 #[repr(C)]
 #[derive(Debug, Eq, PartialEq, Hash)]
@@ -112,7 +117,7 @@ pub enum WrenErrorType {
 /// made for each line in the stack trace. Each of those has the resolved
 /// [module] and [line] where the method or function is defined and [message] is
 /// the name of the method or function.
-pub type WrenErrorFn = extern "C" fn(
+pub type WrenErrorFn = unsafe extern "C" fn(
     vm: *mut WrenVM,
     r#type: WrenErrorType,
     module: *const c_char,
@@ -138,7 +143,7 @@ pub struct WrenForeignClassMethods {
 
 /// Returns a pair of pointers to the foreign methods used to allocate and
 /// finalize the data for instances of [className] in resolved [module].
-pub type WrenBindForeignClassFn = extern "C" fn(
+pub type WrenBindForeignClassFn = unsafe extern "C" fn(
     vm: *mut WrenVM,
     module: *const c_char,
     className: *const c_char,
